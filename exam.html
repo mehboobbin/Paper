@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoExam AI - Smart Exam Generator</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --teacher: #7209b7;
+            --student: #3a86ff;
+            --tutor: #38b000;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo span {
+            color: var(--success);
+        }
+
+        .logo i {
+            margin-right: 10px;
+            font-size: 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 0;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-links a:hover {
+            border-bottom: 2px solid var(--success);
+        }
+
+        .auth-buttons .btn {
+            margin-left: 1rem;
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .btn-outline:hover {
+            background-color: white;
+            color: var(--primary);
+        }
+
+        .btn-teacher {
+            background-color: var(--teacher);
+            color: white;
+        }
+
+        .btn-student {
+            background-color: var(--student);
+            color: white;
+        }
+
+        .btn-tutor {
+            background-color: var(--tutor);
+            color: white;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, #f5f7fb 0%, #e8edff 100%);
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            color: #555;
+        }
+
+        .role-selector {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .role-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            width: 280px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .role-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .role-card.teacher {
+            border-top: 4px solid var(--teacher);
+        }
+
+        .role-card.student {
+            border-top: 4px solid var(--student);
+        }
+
+        .role-card.tutor {
+            border-top: 4px solid var(--tutor);
+        }
+
+        .role-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .teacher .role-icon {
+            color: var(--teacher);
+        }
+
+        .student .role-icon {
+            color: var(--student);
+        }
+
+        .tutor .role-icon {
+            color: var(--tutor);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 0;
+            background-color: white;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.2rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .section-title p {
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: #f9faff;
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        /* Upload Section */
+        .upload-section {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, #e8edff 0%, #f5f7fb 100%);
+        }
+
+        .upload-container {
+            background: white;
+            border-radius: 12px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+        }
+
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .upload-area p {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        .settings-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .checkbox-group input {
+            margin-right: 0.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 3rem 0 1.5rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--light);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-column ul li a {
+            color: #bbb;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-column ul li a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #bbb;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+            }
+
+            .nav-links {
+                margin-top: 1.5rem;
+            }
+
+            .auth-buttons {
+                margin-top: 1.5rem;
+            }
+
+            .role-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .settings-form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-robot"></i>
+                    AutoExam<span>AI</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Features</a></li>
+                    <li><a href="#">How It Works</a></li>
+                    <li><a href="#">Pricing</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+                <div class="auth-buttons">
+                    <a href="#" class="btn btn-outline">Login</a>
+                    <a href="#" class="btn btn-primary">Sign Up</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Smart Exam Papers in Minutes</h1>
+            <p>AutoExam AI generates customized test papers by analyzing your syllabus and fetching relevant questions from trusted academic sources worldwide.</p>
+            
+            <div class="role-selector">
+                <div class="role-card teacher">
+                    <div class="role-icon">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <h3>For Teachers</h3>
+                    <p>Create perfectly balanced exams in minutes, not hours.</p>
+                    <a href="#" class="btn btn-teacher">Get Started</a>
+                </div>
+                
+                <div class="role-card student">
+                    <div class="role-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <h3>For Students</h3>
+                    <p>Generate practice tests tailored to your syllabus.</p>
+                    <a href="#" class="btn btn-student">Try Now</a>
+                </div>
+                
+                <div class="role-card tutor">
+                    <div class="role-icon">
+                        <i class="fas fa-hands-helping"></i>
+                    </div>
+                    <h3>For Tutors</h3>
+                    <p>Create personalized worksheets for each student.</p>
+                    <a href="#" class="btn btn-tutor">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Powerful Features for Academic Success</h2>
+                <p>AutoExam AI combines artificial intelligence with educational expertise to revolutionize exam preparation.</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h3>Syllabus-Aligned Questions</h3>
+                    <p>Our AI analyzes your uploaded syllabus to fetch perfectly matched questions from past papers and academic databases.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Bloom's Taxonomy Levels</h3>
+                    <p>Questions are categorized by cognitive levels (Remember, Understand, Apply, Analyze) for balanced exams.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-stopwatch"></i>
+                    </div>
+                    <h3>Time Estimation</h3>
+                    <p>Automatically calculates suggested time per question based on complexity and student level.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <h3>Smart Mark Distribution</h3>
+                    <p>Distributes marks according to topic weightage in syllabus and question difficulty.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-random"></i>
+                    </div>
+                    <h3>Question Variations</h3>
+                    <p>Generates multiple versions of the same paper to prevent cheating in classroom settings.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-export"></i>
+                    </div>
+                    <h3>Multiple Export Formats</h3>
+                    <p>Download as PDF, Word, or Google Forms. LMS integration available for schools.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section class="upload-section">
+        <div class="container">
+            <div class="upload-container">
+                <h2 style="text-align: center; margin-bottom: 2rem; color: var(--dark);">Create Your First Exam Paper</h2>
+                
+                <div class="upload-area">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>Upload Your Syllabus</h3>
+                    <p>Drag & drop your syllabus file here or click to browse</p>
+                    <p style="font-size: 0.9rem; color: #999;">Supported formats: PDF, DOCX, PPT</p>
+                    <a href="#" class="btn btn-primary" style="margin-top: 1rem;">Select File</a>
+                </div>
+                
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label for="exam-type">Exam Type</label>
+                        <select id="exam-type" class="form-control">
+                            <option>Quiz</option>
+                            <option>Midterm</option>
+                            <option>Final Exam</option>
+                            <option>Practice Test</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="duration">Duration (minutes)</label>
+                        <input type="number" id="duration" class="form-control" value="60">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="difficulty">Difficulty Level</label>
+                        <select id="difficulty" class="form-control">
+                            <option>Easy</option>
+                            <option selected>Medium</option>
+                            <option>Hard</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="total-marks">Total Marks</label>
+                        <input type="number" id="total-marks" class="form-control" value="100">
+                    </div>
+                    
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Question Types</label>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="mcq" checked>
+                            <label for="mcq">Multiple Choice (MCQs)</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="short-answer" checked>
+                            <label for="short-answer">Short Answer Questions</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="long-answer">
+                            <label for="long-answer">Long Answer/Essay Questions</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" style="display: block; width: 100%; padding: 1rem; font-size: 1.1rem; margin-top: 1.5rem;">
+                    Generate Exam Paper <i class="fas fa-magic" style="margin-left: 8px;"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>AutoExam AI</h3>
+                    <p style="color: #bbb; margin-bottom: 1.5rem;">The smartest way to create and practice exam papers powered by artificial intelligence.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Product</h3>
+                    <ul>
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">API</a></li>
+                        <li><a href="#">Integrations</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Webinars</a></li>
+                        <li><a href="#">Help Center</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Company</h3>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2023 AutoExam AI. All rights reserved.
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
